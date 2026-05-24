@@ -1,0 +1,86 @@
+version: "3"
+
+services:
+
+  # MinIO - Object Storage (Data Lake Storage)
+  minio:
+    image: minio/minio
+    container_name: minio
+    environment:
+      MINIO_ROOT_USER: admin
+      MINIO_ROOT_PASSWORD: password
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    networks:
+      - external_network
+      - iceberg_env
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+
+  # Nessie - Data Versioning
+  nessie:
+    image: projectnessie/nessie
+    container_name: nessie
+    ports:
+      - "19120:19120"
+    networks:
+      - iceberg_env
+
+  # Dremio - Data Lake Engine
+  dremio:
+    image: dremio/dremio-oss:latest
+    container_name: dremio
+    ports:
+      - "9047:9047"
+      - "31010:31010"
+      - "45678:45678"
+    networks:
+      - external_network
+      - iceberg_env
+    volumes:
+      - dremio_data:/var/lib/dremio
+      - dremio_config:/opt/dremio/conf
+
+  # Apache Airflow - Workflow Orchestration
+  airflow:
+    build: ./dl-airflow
+    container_name: airflow
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: sqlite:////usr/local/airflow/airflow.db
+    ports:
+      - "8080:8080"
+    networks:
+      - external_network
+    volumes:
+      - ./dl-airflow/dags:/usr/local/airflow/dags
+    command: >
+      bash -c "airflow db init &&
+               airflow users create --username admin --password admin --firstname Admin --lastname User --role Admin --email admin@example.com &&
+               airflow webserver & airflow scheduler"
+
+  # Metabase - Data Analytics & Visualization
+  metabase:
+    build: ./metabase
+    container_name: metabase
+    ports:
+      - "3000:3000"
+    networks:
+      - external_network
+    volumes:
+      - metabase_data:/metabase-data
+
+networks:
+  external_network:
+    external: true
+  iceberg_env:
+    external: true
+
+volumes:
+  minio_data:
+  dremio_data:
+  dremio_config:
+  metabase_data:
