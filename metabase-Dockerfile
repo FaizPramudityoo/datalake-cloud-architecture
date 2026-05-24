@@ -1,6 +1,0 @@
-FROM metabase/metabase:latest
-
-# Add Dremio driver for Metabase
-ADD ./dremio.metabase-driver.jar /plugins/
-
-EXPOSE 3000
