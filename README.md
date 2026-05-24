@@ -1,9 +1,8 @@
-<img width="1262" height="765" alt="architecture" src="https://github.com/user-attachments/assets/e28903bb-4076-4f7b-82e8-1b4f0d471f40" />
 # datalake-cloud-architecture
 
 # Architecture
 
-![Uploading architecture.png…]()
+<img width="1262" height="765" alt="architecture" src="https://github.com/user-attachments/assets/e28903bb-4076-4f7b-82e8-1b4f0d471f40" />
 
 # Tech Stack
 
