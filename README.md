@@ -3,7 +3,7 @@
 # Architecture
 
 > Add your architecture diagram image here by uploading it to your repo and replacing this line with:
-> `![Architecture](./images/architecture.png)`
+> `images/architecture.png`
 
 # Tech Stack
 
